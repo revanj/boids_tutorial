@@ -1,19 +1,18 @@
 use std::{marker::PhantomData, sync::Arc};
-use image::GenericImageView;
+use image::{DynamicImage, GenericImageView};
 use wgpu::{BindGroup, BindGroupDescriptor, BindGroupLayout, BindGroupLayoutDescriptor, BindGroupLayoutEntry, BindingType, BlendState, Buffer, BufferBindingType, BufferUsages, ColorTargetState, ColorWrites, FragmentState, FrontFace, PipelineCompilationOptions, PolygonMode, PrimitiveTopology, RenderPipelineDescriptor, ShaderStages, util::DeviceExt};
 use bytemuck::Pod;
 
-use crate::renderer::Gpu;
+use crate::{math::Mat4, renderer::Gpu};
 
 pub struct Sprite {
     texture: UniformTexture,
     mesh: GpuMesh<Vertex>,
     transform: UniformMat4,
 } impl Sprite {
-    pub fn new_arrow(gpu: &Gpu) -> Self {
+    pub fn new(gpu: &Gpu, image: &DynamicImage) -> Self {
         let mesh = make_mesh(gpu, 1f32, 1f32);
-        let image = image::load_from_memory(include_bytes!("../assets/triangle.png")).unwrap();
-        let texture = UniformTexture::from_image(gpu, &image, "Arrow Image");
+        let texture = UniformTexture::from_image(gpu, image, "Image");
 
         Self {
             texture,
@@ -22,7 +21,7 @@ pub struct Sprite {
         }
     }
 
-    pub fn set_mvp(&mut self, gpu: &Gpu, mvp: nalgebra::Matrix4<f32>) {
+    pub fn set_mvp(&mut self, gpu: &Gpu, mvp: Mat4) {
         gpu.queue.write_buffer(
             &self.transform.buffer,
             0, bytemuck::cast_slice(mvp.as_slice())

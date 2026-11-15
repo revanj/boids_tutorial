@@ -36,6 +36,7 @@ trait Game {
 }
 
 struct MousePosition(Vector2);
+struct Transform(Mat4);
 
 struct Engine<G: Game> {
     finished_init: bool,

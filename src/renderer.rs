@@ -26,7 +26,7 @@ pub struct Renderer {
     pub fn resize(&mut self, width: u32, height: u32) {
     }
 
-    pub fn size_vec(&self) -> Vector2 {
+    pub fn size(&self) -> Vector2 {
         let extent = self.window.inner_size();
         vector![extent.width as f32, extent.height as f32]
     }
